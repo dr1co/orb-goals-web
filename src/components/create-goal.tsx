@@ -1,4 +1,8 @@
 import { X } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   DialogClose,
@@ -14,8 +18,34 @@ import {
   RadioGroupItem,
 } from "./ui/radio-group";
 import { Button } from "./ui/button";
+import { postGoal } from "../api/post-goal";
+
+const createGoalForm = z.object({
+  title: z.string().min(1, "Enter the activity you want to do."),
+  desiredWeeklyFrequency: z.coerce.number().min(1).max(7),
+});
 
 export function CreateGoal() {
+  const queryClient = useQueryClient();
+
+  const { register, control, handleSubmit, formState, reset } = useForm<
+    z.infer<typeof createGoalForm>
+  >({
+    resolver: zodResolver(createGoalForm),
+  });
+
+  async function handleCreateGoal(data: z.infer<typeof createGoalForm>) {
+    await postGoal({
+      title: data.title,
+      desiredWeeklyFrequency: data.desiredWeeklyFrequency,
+    });
+
+    queryClient.invalidateQueries({ queryKey: ["summary"] });
+    queryClient.invalidateQueries({ queryKey: ["pending-goals"] });
+
+    reset();
+  }
+
   return (
     <DialogContent>
       <div className="flex flex-col gap-6 h-full">
@@ -33,7 +63,10 @@ export function CreateGoal() {
           </DialogDescription>
         </div>
 
-        <form action="" className="flex flex-col justify-between flex-1">
+        <form
+          onSubmit={handleSubmit(handleCreateGoal)}
+          className="flex flex-col justify-between flex-1"
+        >
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="title">What is the activity?</Label>
@@ -41,62 +74,82 @@ export function CreateGoal() {
                 id="title"
                 autoFocus
                 placeholder="Workout, meditate... you choose!"
+                {...register("title")}
               />
+
+              {formState.errors.title && (
+                <p className="text-red-400 text-sm">
+                  {formState.errors.title.message}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="desiredWeeklyFrequency">
                 How many times a week?
               </Label>
-              <RadioGroup>
-                <RadioGroupItem value="1">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-50 text-sm font-medium leading-none">
-                    Once a week
-                  </span>
-                </RadioGroupItem>
 
-                <RadioGroupItem value="2">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-100 text-sm font-medium leading-none">
-                    Twice a week
-                  </span>
-                </RadioGroupItem>
+              <Controller
+                control={control}
+                name="desiredWeeklyFrequency"
+                defaultValue={1}
+                render={({ field }) => {
+                  return (
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                    >
+                      <RadioGroupItem value="1">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-50 text-sm font-medium leading-none">
+                          Once a week
+                        </span>
+                      </RadioGroupItem>
 
-                <RadioGroupItem value="3">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-200 text-sm font-medium leading-none">
-                    3x a week
-                  </span>
-                </RadioGroupItem>
+                      <RadioGroupItem value="2">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-100 text-sm font-medium leading-none">
+                          Twice a week
+                        </span>
+                      </RadioGroupItem>
 
-                <RadioGroupItem value="4">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-300 text-sm font-medium leading-none">
-                    4x a week
-                  </span>
-                </RadioGroupItem>
+                      <RadioGroupItem value="3">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-200 text-sm font-medium leading-none">
+                          3x a week
+                        </span>
+                      </RadioGroupItem>
 
-                <RadioGroupItem value="5">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-400 text-sm font-medium leading-none">
-                    5x a week
-                  </span>
-                </RadioGroupItem>
+                      <RadioGroupItem value="4">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-300 text-sm font-medium leading-none">
+                          4x a week
+                        </span>
+                      </RadioGroupItem>
 
-                <RadioGroupItem value="6">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-500 text-sm font-medium leading-none">
-                    6x a week
-                  </span>
-                </RadioGroupItem>
+                      <RadioGroupItem value="5">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-400 text-sm font-medium leading-none">
+                          5x a week
+                        </span>
+                      </RadioGroupItem>
 
-                <RadioGroupItem value="7">
-                  <RadioGroupIndicator />
-                  <span className="text-yellow-600 text-sm font-medium leading-none">
-                    The full week!
-                  </span>
-                </RadioGroupItem>
-              </RadioGroup>
+                      <RadioGroupItem value="6">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-500 text-sm font-medium leading-none">
+                          6x a week
+                        </span>
+                      </RadioGroupItem>
+
+                      <RadioGroupItem value="7">
+                        <RadioGroupIndicator />
+                        <span className="text-yellow-600 text-sm font-medium leading-none">
+                          The full week!
+                        </span>
+                      </RadioGroupItem>
+                    </RadioGroup>
+                  );
+                }}
+              />
             </div>
           </div>
 
