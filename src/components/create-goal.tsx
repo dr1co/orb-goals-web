@@ -156,10 +156,10 @@ export function CreateGoal() {
           <div className="flex items-center gap-3">
             <DialogClose asChild>
               <Button type="button" variant="secondary" className="flex-1">
-                Fechar
+                 Close
               </Button>
             </DialogClose>
-            <Button className="flex-1">Salvar</Button>
+            <Button className="flex-1">Save</Button>
           </div>
         </form>
       </div>

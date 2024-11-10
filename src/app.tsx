@@ -1,23 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Dialog } from "./components/ui/dialog";
-import { CreateGoal } from "./components/create-goal";
-import { EmptyGoals } from "./components/empty-goals";
-import { Summary } from "./components/summary";
-import { getSummary } from "./api/get-summary";
+import { UserProvider } from "./contexts/user";
+import { Register } from "./components/register";
+import { Login } from "./components/login";
+import { Home } from "./components/home";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home /> 
+  },
+  {
+    path: "/register",
+    element: <Register />
+  },
+  {
+    path: "/login",
+    element: <Login />
+  }
+]);
 
 export function App() {
-  const { data } = useQuery({
-    queryKey: ["summary"],
-    queryFn: getSummary,
-    staleTime: 60000,
-  });
-
   return (
-    <Dialog>
-      {data && data.total > 0 ? <Summary /> : <EmptyGoals />}
-
-      <CreateGoal />
-    </Dialog>
-  );
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
+  )
 }
