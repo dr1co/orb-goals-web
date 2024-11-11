@@ -11,9 +11,18 @@ interface ContextInterface {
   setUser: (value: UserInterface) => void;
 }
 
-export const UserContext = createContext<ContextInterface | undefined>(undefined);
+export const UserContext = createContext<ContextInterface>({
+  user: {
+    id: "",
+    name: "",
+    email: "",
+  },
+  setUser: (value: UserInterface) => console.log(value),
+});
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState({
     id: "",
     name: "",

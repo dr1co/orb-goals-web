@@ -5,9 +5,18 @@ type PendingGoalsType = {
   completionCount: number;
 }[];
 
-export async function getPendingGoals(): Promise<PendingGoalsType> {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/pending-goals`);
-  const data = response.json();
+export async function getPendingGoals(
+  userId: string
+): Promise<PendingGoalsType> {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/pending-goals`,
+    {
+      headers: {
+        authorization: `Bearer ${userId}`,
+      },
+    }
+  );
 
+  const data = await response.json();
   return data;
 }

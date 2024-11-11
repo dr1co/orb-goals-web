@@ -1,16 +1,19 @@
 import { Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
 
 import { OutlineButton } from "./ui/outline-button";
 import { getPendingGoals } from "../api/get-pending-goals";
 import { postGoalCompletion } from "../api/post-goal-completion";
+import { UserContext } from "../contexts/user";
 
 export function PendingGoals() {
+  const context = useContext(UserContext);
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ["pending-goals"],
-    queryFn: getPendingGoals,
+    queryFn: () => getPendingGoals(context.user.id),
     staleTime: 60000,
   });
 

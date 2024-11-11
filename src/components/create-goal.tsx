@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
 
 import {
   DialogClose,
@@ -19,6 +20,7 @@ import {
 } from "./ui/radio-group";
 import { Button } from "./ui/button";
 import { postGoal } from "../api/post-goal";
+import { UserContext } from "../contexts/user";
 
 const createGoalForm = z.object({
   title: z.string().min(1, "Enter the activity you want to do."),
@@ -26,6 +28,8 @@ const createGoalForm = z.object({
 });
 
 export function CreateGoal() {
+  const context = useContext(UserContext);
+
   const queryClient = useQueryClient();
 
   const { register, control, handleSubmit, formState, reset } = useForm<
@@ -35,7 +39,10 @@ export function CreateGoal() {
   });
 
   async function handleCreateGoal(data: z.infer<typeof createGoalForm>) {
+    const userId = context.user.id;
+
     await postGoal({
+      userId,
       title: data.title,
       desiredWeeklyFrequency: data.desiredWeeklyFrequency,
     });
@@ -156,7 +163,7 @@ export function CreateGoal() {
           <div className="flex items-center gap-3">
             <DialogClose asChild>
               <Button type="button" variant="secondary" className="flex-1">
-                 Close
+                Close
               </Button>
             </DialogClose>
             <Button className="flex-1">Save</Button>

@@ -11,9 +11,13 @@ type SummaryType = {
   >;
 };
 
-export async function getSummary(): Promise<SummaryType> {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/summary`);
-  const data = await response.json();
+export async function getSummary(userId: string): Promise<SummaryType> {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/summary`, {
+    headers: {
+      authorization: `Bearer ${userId}`,
+    },
+  });
 
+  const data = await response.json();
   return data;
 }

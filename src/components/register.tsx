@@ -18,12 +18,7 @@ export const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [warning, setWarning] = useState("");
-  const [validInputs, setValidInputs] = useState([
-    true,
-    true,
-    true,
-    true,
-  ]);
+  const [validInputs, setValidInputs] = useState([true, true, true, true]);
 
   const validateName = () => {
     if (name.length < 3) {
@@ -61,11 +56,21 @@ export const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newValidInputs = [validateName(), validateEmail(), validatePassword(), validatePasswordConfirmation()];
+
+    const newValidInputs = [
+      validateName(),
+      validateEmail(),
+      validatePassword(),
+      validatePasswordConfirmation(),
+    ];
     setValidInputs(newValidInputs);
 
-    if (validateName() && validateEmail() && validatePassword() && validatePasswordConfirmation()) {
+    if (
+      validateName() &&
+      validateEmail() &&
+      validatePassword() &&
+      validatePasswordConfirmation()
+    ) {
       const newUser = await postUserRegister({
         name,
         email,
@@ -77,6 +82,7 @@ export const Register = () => {
         setWarning(newUser.error);
       } else {
         context?.setUser(newUser);
+        setTimeout(() => null, 2000);
         navigate("/");
       }
     }
@@ -105,10 +111,18 @@ export const Register = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your beautiful name!"
-                className={`w-full ${validInputs[0] ? "" : "border border-red-500"}`}
+                className={`w-full ${
+                  validInputs[0] ? "" : "border border-red-500"
+                }`}
               />
             </div>
-            <Label className={`text-red-500 mt-1 text-xs ${validInputs[0] ? "hidden" : "flex"}`}>Your name must have at least 3 characters!</Label>
+            <Label
+              className={`text-red-500 mt-1 text-xs ${
+                validInputs[0] ? "hidden" : "flex"
+              }`}
+            >
+              Your name must have at least 3 characters!
+            </Label>
           </div>
 
           <div>
@@ -122,10 +136,18 @@ export const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@example.com"
-                className={`w-full ${validInputs[1] ? "" : "border border-red-500"}`}
+                className={`w-full ${
+                  validInputs[1] ? "" : "border border-red-500"
+                }`}
               />
             </div>
-              <Label className={`text-red-500 mt-1 text-xs ${validInputs[1] ? "hidden" : "flex"}`}>Please insert a valid e-mail!</Label>
+            <Label
+              className={`text-red-500 mt-1 text-xs ${
+                validInputs[1] ? "hidden" : "flex"
+              }`}
+            >
+              Please insert a valid e-mail!
+            </Label>
           </div>
 
           <div>
@@ -139,10 +161,18 @@ export const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Super secret password here!"
-                className={`w-full ${validInputs[2] ? "" : "border border-red-500"}`}
+                className={`w-full ${
+                  validInputs[2] ? "" : "border border-red-500"
+                }`}
               />
             </div>
-              <Label className={`text-red-500 mt-1 text-xs ${validInputs[2] ? "hidden" : "flex"}`}>Your password should have at least 6 characters!</Label>
+            <Label
+              className={`text-red-500 mt-1 text-xs ${
+                validInputs[2] ? "hidden" : "flex"
+              }`}
+            >
+              Your password should have at least 6 characters!
+            </Label>
           </div>
 
           <div>
@@ -156,18 +186,28 @@ export const Register = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat the super secret password!"
-                className={`w-full ${validInputs[3] ? "" : "border border-red-500"}`}
+                className={`w-full ${
+                  validInputs[3] ? "" : "border border-red-500"
+                }`}
               />
             </div>
-              <Label className={`text-red-500 mt-1 text-xs ${validInputs[3] ? "hidden" : "flex"}`}>Passwords must match!</Label>
+            <Label
+              className={`text-red-500 mt-1 text-xs ${
+                validInputs[3] ? "hidden" : "flex"
+              }`}
+            >
+              Passwords must match!
+            </Label>
           </div>
 
           <Button type="submit" className="w-full">
             Create account
           </Button>
         </form>
-        <Label className={`text-red-500 mt-1 ${warning ? "flex" : "hidden"}`}>{warning}</Label>
-        
+        <Label className={`text-red-500 mt-1 ${warning ? "flex" : "hidden"}`}>
+          {warning}
+        </Label>
+
         <p className="mt-4 text-center text-gray-400">
           Already have an account?{" "}
           <a

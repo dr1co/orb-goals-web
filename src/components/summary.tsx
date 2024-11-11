@@ -1,6 +1,7 @@
 import { CheckCircle2, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { useContext } from "react";
 
 import logo from "../assets/galaxy.png";
 import { DialogTrigger } from "./ui/dialog";
@@ -9,11 +10,14 @@ import { Button } from "./ui/button";
 import { Progress, ProgressIndicator } from "./ui/progress-bar";
 import { Separator } from "./ui/separator";
 import { getSummary } from "../api/get-summary";
+import { UserContext } from "../contexts/user";
 
 export function Summary() {
+  const context = useContext(UserContext);
+
   const { data } = useQuery({
     queryKey: ["summary"],
-    queryFn: getSummary,
+    queryFn: () => getSummary(context.user.id),
     staleTime: 60000,
   });
 

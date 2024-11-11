@@ -1,9 +1,11 @@
 interface CreateGoalRequest {
+  userId: string;
   title: string;
   desiredWeeklyFrequency: number;
 }
 
 export async function postGoal({
+  userId,
   title,
   desiredWeeklyFrequency,
 }: CreateGoalRequest) {
@@ -11,6 +13,7 @@ export async function postGoal({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${userId}`,
     },
     body: JSON.stringify({
       title,
